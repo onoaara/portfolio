@@ -9,6 +9,12 @@
   --accent-white: #ffffff;
 }
 
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --accent-white: #111111;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -18,17 +24,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* The color scheme is controlled via the .dark class on <html> */
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 #page-wrapper {
