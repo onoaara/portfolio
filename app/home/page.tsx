@@ -4,7 +4,11 @@ import React from "react";
 import Link from "next/link";
 import ThemedText from "@/components/ThemedText";
 
+import { useGetProjectsQuery } from "@/lib/api";
+
 export default function Home() {
+  const { data: projects, isLoading, error } = useGetProjectsQuery();
+
   return (
     <div className="mx-auto max-w-6xl space-y-16">
       <section className="pt-6 md:pt-10">
@@ -34,42 +38,45 @@ export default function Home() {
           Projects
         </ThemedText>
         <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
-          {[
-            {
-              title: "Crnt",
-              tag: "Mobile App",
-              color: "from-fuchsia-500 to-purple-600",
-            },
-            {
-              title: "Town",
-              tag: "Web Design",
-              color: "from-lime-300 to-lime-500",
-            },
-            {
-              title: "Crnt",
-              tag: "Mobile App",
-              color: "from-orange-400 to-amber-500",
-            },
-          ].map((c, i) => (
-            <Link
-              key={i}
-              href="/projects"
-              className="group block rounded-2xl border border-black/10 bg-white p-3 transition hover:shadow-md dark:border-white/10 dark:bg-neutral-900"
-            >
-              <div
-                className={[
-                  "aspect-4/3 w-full rounded-xl bg-linear-to-br",
-                  c.color,
-                ].join(" ")}
-              />
-              <div className="mt-3 flex items-center justify-between">
-                <ThemedText weight="semibold">{c.title}</ThemedText>
-                <ThemedText variant="caption" tone="muted">
-                  {c.tag}
-                </ThemedText>
-              </div>
-            </Link>
-          ))}
+          {isLoading ? (
+            <div className="col-span-full py-10 text-center">
+              <ThemedText tone="muted">Loading projects...</ThemedText>
+            </div>
+          ) : error ? (
+            <div className="col-span-full py-10 text-center">
+              <ThemedText tone="muted">Error loading projects</ThemedText>
+            </div>
+          ) : (
+            projects?.slice(0, 3).map((c, i) => (
+              <Link
+                key={c.id || i}
+                href="/projects"
+                className="group block rounded-2xl border border-black/10 bg-white p-3 transition hover:shadow-md dark:border-white/10 dark:bg-neutral-900"
+              >
+                <div
+                  className={[
+                    "aspect-4/3 w-full rounded-xl bg-linear-to-br",
+                    c.color || "from-neutral-200 to-neutral-400",
+                  ].join(" ")}
+                  style={
+                    c.image_url
+                      ? {
+                          backgroundImage: `url(${c.image_url})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }
+                      : {}
+                  }
+                />
+                <div className="mt-3 flex items-center justify-between">
+                  <ThemedText weight="semibold">{c.title}</ThemedText>
+                  <ThemedText variant="caption" tone="muted">
+                    {c.tag}
+                  </ThemedText>
+                </div>
+              </Link>
+            ))
+          )}
         </div>
       </section>
 
